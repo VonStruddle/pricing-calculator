@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <div class="pricing-section__range">
+        <div class="pricing-section__range" v-if="content.hasSlider">
             <div class="pricing-section__range-preview">
                 <div
                     class="pricing-section__range-preview-tooltip"
@@ -78,62 +78,84 @@
 </template>
 
 <script>
+import { getPlansSettings } from './configurations';
+
 export default {
     props: {
         content: Object,
     },
     wwDefaultContent: {
         headerObjects: [],
-        plans: [
-            {
-                planHeaderObjects: [],
-                planPricingObjects: [],
-                planMainObjects: [],
-                prices: [19, 199],
-                color: '#FFFFFF',
-                priceStyle: {
-                    color: '#000000',
-                    fontSize: 30,
-                },
-            },
-            {
-                planHeaderObjects: [],
-                planPricingObjects: [],
-                planMainObjects: [],
-                prices: [39, 399],
-                color: '#FFFFFF',
-                priceStyle: {
-                    color: '#000000',
-                    fontSize: 30,
-                },
-            },
-            {
-                planHeaderObjects: [],
-                planPricingObjects: [],
-                planMainObjects: [],
-                prices: [99, 999],
-                color: '#5F30E2',
-                priceStyle: {
-                    color: '#000000',
-                    fontSize: 30,
-                },
-            },
-            {
-                planHeaderObjects: [],
-                planPricingObjects: [],
-                planMainObjects: [],
-                prices: [199, 1999],
-                color: '#FFFFFF',
-                priceStyle: {
-                    color: '#000000',
-                    fontSize: 30,
-                },
-            },
-        ],
+        plans: [],
         mainColor: '#5F30E2',
         scrollBarText: 'User',
         devise: '$',
         maxUserCount: 100,
+        hasSlider: true,
+        nbOfPlans: 4,
+    },
+    wwEditorConfiguration({ content }) {
+        return {
+            settingsOptions: {
+                hasSlider: {
+                    label: { en: 'Use slider', fr: 'Utiliser le slider' },
+                    type: 'OnOff',
+                },
+                mainColor: {
+                    label: { en: 'Main Color', fr: 'Couleur' },
+                    type: 'Color',
+                },
+                scrollBarText: {
+                    label: { en: 'ScrollBar Text', fr: 'Texte sur Barre' },
+                    type: 'Text',
+                    options: {
+                        placeholder: 'User',
+                    },
+                },
+                devise: {
+                    label: { en: 'Devise', fr: 'Devise' },
+                    type: 'Text',
+                    options: {
+                        placeholder: '$',
+                    },
+                },
+                nbOfPlans: {
+                    label: { en: 'Number of plans', fr: 'Nombre de plans' },
+                    type: 'Number',
+                },
+            },
+            ...getPlansSettings(content),
+        };
+    },
+    watch: {
+        'content.nbOfPlans': {
+            immediate: true,
+            handler() {
+                const plansLength = this.content.plans.length;
+                const nbOfPlans = this.content.nbOfPlans;
+                if (plansLength === nbOfPlans) {
+                    return;
+                } else if (plansLength > nbOfPlans) {
+                    this.content.plans = this.content.plans.slice(0, nbOfPlans - 1);
+                } else {
+                    const plansToAdd = nbOfPlans - plansLength;
+                    const range = n => [...Array(n).keys()];
+                    for (const _ in range(plansToAdd)) {
+                        this.content.plans.push({
+                            planHeaderObjects: [],
+                            planPricingObjects: [],
+                            planMainObjects: [],
+                            prices: [19, 199],
+                            color: '#FFFFFF',
+                            priceStyle: {
+                                color: '#000000',
+                                fontSize: 30,
+                            },
+                        });
+                    }
+                }
+            },
+        },
     },
     data() {
         return {
