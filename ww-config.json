@@ -1,33 +1,4 @@
 {
     "componentPath": "./src/wwSection.vue",
-    "editor": {
-        "settingsOptions": {
-            "hasSlider": {
-                "label": { "en": "Use slider", "fr": "Utiliser le slider" },
-                "type": "OnOff"
-            },
-            "mainColor": {
-                "label": { "en": "Main Color", "fr": "Couleur" },
-                "type": "Color"
-            },
-            "scrollBarText": {
-                "label": { "en": "ScrollBar Text", "fr": "Texte sur Barre" },
-                "type": "Text",
-                "options": {
-                    "placeholder": "User"
-                }
-            },
-            "devise": {
-                "label": { "en": "Devise", "fr": "Devise" },
-                "type": "Text",
-                "options": {
-                    "placeholder": "$"
-                }
-            },
-            "nbOfPlans": {
-                "label": { "en": "Number of plans", "fr": "Nombre de plans" },
-                "type": "Number"
-            }
-        }
-    }
+    "editor": {}
 }

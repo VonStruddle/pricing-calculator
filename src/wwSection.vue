@@ -81,18 +81,31 @@
 import { getPlansSettings } from './configurations';
 
 export default {
+    name: '__COMPONENT_NAME__',
     props: {
         content: Object,
     },
     wwDefaultContent: {
         headerObjects: [],
-        plans: [],
+        plans: [
+            {
+                planHeaderObjects: [],
+                planPricingObjects: [],
+                planMainObjects: [],
+                prices: [19, 199],
+                color: '#FFFFFF',
+                priceStyle: {
+                    color: '#000000',
+                    fontSize: 30,
+                },
+            },
+        ],
         mainColor: '#5F30E2',
         scrollBarText: 'User',
         devise: '$',
         maxUserCount: 100,
         hasSlider: true,
-        nbOfPlans: 4,
+        nbOfPlans: 1,
     },
     wwEditorConfiguration({ content }) {
         return {
@@ -111,6 +124,7 @@ export default {
                     options: {
                         placeholder: 'User',
                     },
+                    multiLang: true,
                 },
                 devise: {
                     label: { en: 'Devise', fr: 'Devise' },
@@ -118,43 +132,46 @@ export default {
                     options: {
                         placeholder: '$',
                     },
+                    multiLang: true,
                 },
                 nbOfPlans: {
                     label: { en: 'Number of plans', fr: 'Nombre de plans' },
                     type: 'Number',
+                    options: {
+                        min: 1,
+                        max: 10,
+                    },
                 },
+                ...getPlansSettings(content),
             },
-            ...getPlansSettings(content),
         };
     },
     watch: {
-        'content.nbOfPlans': {
-            immediate: true,
-            handler() {
-                const plansLength = this.content.plans.length;
-                const nbOfPlans = this.content.nbOfPlans;
-                if (plansLength === nbOfPlans) {
-                    return;
-                } else if (plansLength > nbOfPlans) {
-                    this.content.plans = this.content.plans.slice(0, nbOfPlans - 1);
-                } else {
-                    const plansToAdd = nbOfPlans - plansLength;
-                    const range = n => [...Array(n).keys()];
-                    for (const _ in range(plansToAdd)) {
-                        this.content.plans.push({
-                            planHeaderObjects: [],
-                            planPricingObjects: [],
-                            planMainObjects: [],
-                            prices: [19, 199],
-                            color: '#FFFFFF',
-                            priceStyle: {
-                                color: '#000000',
-                                fontSize: 30,
-                            },
-                        });
-                    }
+        'content.nbOfPlans'() {
+            const plansLength = this.content.plans.length;
+            const nbOfPlans = this.content.nbOfPlans;
+            if (plansLength === nbOfPlans) {
+                return;
+            } else if (plansLength > nbOfPlans) {
+                this.$emit('update', { plans: this.content.plans.slice(0, nbOfPlans) });
+            } else {
+                const plansToAdd = nbOfPlans - plansLength;
+                const newPlans = [];
+                for (const _idx of Array(plansToAdd).keys()) {
+                    newPlans.push({
+                        planHeaderObjects: [],
+                        planPricingObjects: [],
+                        planMainObjects: [],
+                        prices: [19, 199],
+                        color: '#FFFFFF',
+                        priceStyle: {
+                            color: '#000000',
+                            fontSize: 30,
+                        },
+                    });
                 }
-            },
+                this.$emit('update', { plans: [...this.content.plans, ...newPlans] });
+            }
         },
     },
     data() {
@@ -169,7 +186,9 @@ export default {
             return `${this.content.scrollBarText}${this.userCount > 1 ? 's' : ''}`;
         },
     },
-    mounted() {},
+    mounted() {
+        this.$emit('update', { mainColor: 'SQDF' });
+    },
 };
 </script>
 
@@ -330,6 +349,7 @@ export default {
     }
     &__plans {
         display: flex;
+        flex-wrap: wrap;
         column-gap: 40px;
 
         &-plan {

@@ -1,30 +1,32 @@
 export const getPlansSettings = content => {
     const plans = {};
-    for (const planIdx in content.nbOfPlans) {
+    for (let planIdx = 1; planIdx <= content.nbOfPlans; planIdx++) {
         plans[`plan${planIdx}PriceMonth`] = {
             label: { en: `Plan ${planIdx} /month`, fr: `Plan ${planIdx} /mois` },
             type: 'Number',
             path: `plans[${planIdx - 1}].prices[0]`,
+            multiLang: true,
         };
         plans[`plan${planIdx}PriceYear`] = {
-            label: { en: 'Plan ${planIdx} /year', fr: 'Plan ${planIdx} /an' },
+            label: { en: `Plan ${planIdx} /year`, fr: `Plan ${planIdx} /an` },
             type: 'Number',
-            path: `plans[${planIdx}].prices[1]`,
+            path: `plans[${planIdx - 1}].prices[1]`,
+            multiLang: true,
         };
         plans[`plan${planIdx}PriceFont`] = {
             label: { en: `Plan ${planIdx} font size`, fr: `Plan ${planIdx} taille` },
             type: 'Number',
-            path: `plans[${planIdx}].priceStyle.fontSize`,
+            path: `plans[${planIdx - 1}].priceStyle.fontSize`,
         };
         plans[`plan${planIdx}Color`] = {
             label: { en: `Plan ${planIdx} color`, fr: `Plan ${planIdx} couleur` },
             type: 'Color',
-            path: `plans[${planIdx}].color`,
+            path: `plans[${planIdx - 1}].color`,
         };
         plans[`plan${planIdx}PriceColor`] = {
             label: { en: `Plan ${planIdx} price color`, fr: `Plan ${planIdx} couleur prix` },
             type: 'Color',
-            path: `plans[${planIdx}].priceStyle.color`,
+            path: `plans[${planIdx - 1}].priceStyle.color`,
         };
     }
     return plans;
